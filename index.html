@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexLib | BGI Library Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #0ea5e9;
+            --dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.9);
+            --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f8fafc;
+            color: var(--dark);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            line-height: 1.6;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 2000;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: 0.4s;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-fill {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 5% 60px;
+            background: radial-gradient(circle at top right, #e0e7ff, transparent),
+                radial-gradient(circle at bottom left, #f0f9ff, transparent);
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        .hero-content h1 span {
+            color: var(--primary);
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            color: #475569;
+            margin-bottom: 2rem;
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 3rem;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .hero-image img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* --- BOOK SECTION --- */
+        #books {
+            padding: 5rem 5%;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-container {
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 3rem;
+            border-radius: 50px;
+            border: 2px solid #e2e8f0;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+        }
+
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: 0.3s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .img-container {
+            width: 100%;
+            height: 250px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- CONTACT SECTION --- */
+        .contact-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            padding: 5rem 5%;
+            background: var(--dark);
+            color: white;
+        }
+
+        .contact-section h2 {
+            font-size: 2.2rem;
+        }
+
+        .contact-form {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .input-box {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.8rem;
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 1.2rem;
+            outline: none;
+            font-family: inherit;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: #020617;
+            color: #94a3b8;
+            padding: 4rem 5% 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+
+        /* --- DESKTOP ADAPTATION (Media Queries) --- */
+        @media (min-width: 768px) {
+            nav {
+                padding: 1.2rem 8%;
+            }
+
+            .hero {
+                flex-direction: row;
+                text-align: left;
+                padding: 0 8%;
+                justify-content: space-between;
+            }
+
+            .hero-content h1 {
+                font-size: 4rem;
+            }
+
+            .hero-image {
+                width: 45%;
+                margin-top: 0;
+            }
+
+            .contact-section {
+                grid-template-columns: 1fr 1fr;
+                padding: 8rem 8%;
+            }
+
+            .footer-grid {
+                grid-template-columns: 2fr 1fr 1fr 1fr;
+            }
+        }
+
+        /* --- MOBILE MENU LOGIC --- */
+        @media (max-width: 767px) {
+            .hamburger {
+                display: block;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: -100%;
+                left: 0;
+                width: 100%;
+                flex-direction: column;
+                background: white;
+                padding: 2rem;
+                transition: 0.5s;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                top: 70px;
+            }
+
+            .btn-group {
+                display: none;
+            }
+
+            /* Standard buttons hidden, moved to menu if needed */
+
+            /* Show buttons inside mobile menu */
+            .nav-links.active .mobile-btns {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                gap: 10px;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav id="navbar">
+        <div class="logo"><i class="fas fa-bolt-lightning"></i> NexLib<img src="" alt=""></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#" onclick="toggleMenu()">Home</a></li>
+            <li><a href="#books" onclick="toggleMenu()">Catalog</a></li>
+            <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
+            <li class="mobile-btns" style="display: none;">
+                <a href="login.html" class="btn btn-outline">Log In</a>
+                <a href="signup.html" class="btn btn-outline">Sign Up</a>
+
+            </li>
+        </ul>
+        <div class="btn-group" id="navBtns">
+            <a href="login.html" class="btn btn-outline">Log In</a>
+            <a href="signup.html" class="btn btn-outline">Sign Up</a>
+        </div>
+        <i class="fas fa-bars hamburger" onclick="toggleMenu()"></i>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <span class="tag"
+                style="background: #eef2ff; color: var(--primary); padding: 5px 15px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; margin-bottom: 1rem; display: inline-block;">BGI
+                TECHOLOGY LIBRARY</span>
+            <h1>The Smart Way to <span>Manage</span> Knowledge.</h1>
+            <p>A comprehensive ecosystem for students and librarians to track, discover, and borrow technical resources
+                seamlessly.</p>
+            <div
+                style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; md-justify-content: flex-start;">
+                <button class="btn btn-fill" style="padding: 1rem 2rem;">Get Started</button>
+                <button class="btn btn-outline" style="border-color: transparent;"><i class="fas fa-play"></i> Watch
+                    Demo</button>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="banner.jpeg"
+                alt="Library">
+        </div>
+    </header>
+
+    <section id="books">
+        <div class="section-header">
+            <h2>Explore Our Collection</h2>
+
+        </div>
+
+        <div class="book-grid" id="bookGrid">
+            <div class="book-card" data-title="Electrician ">
+                <div class="img-container"><img
+                        src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=400&q=80">
+                </div>
+                <span style="color: var(--primary); font-size: 0.7rem; font-weight: 800;">ELECTRICIAN</span>
+                <h3 style="margin: 0.5rem 0">Electrician </h3>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Concepts in circuit design and
+                    safety.</p>
+                <a href="login.html" class="btn btn-outline" style="width:100%; text-decoration: none;">Borrow</a>
+            </div>
+            <div class="book-card" data-title="Python Programming">
+                <div class="img-container"><img src="copa.webp">
+                </div>
+                <span style="color: var(--primary); font-size: 0.7rem; font-weight: 800;">COPA</span>
+                <h3 style="margin: 0.5rem 0">Computer Operator & Programming Assistant</h3>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Foundational coding for data
+                    management.</p>
+                 <a href="login.html" class="btn btn-outline" style="width:100%; text-decoration: none;">Borrow</a>
+            </div>
+
+            <div class="book-card" data-title="MMV">
+                <div class="img-container"><img src="mmv benar.webp">
+                </div>
+                <span style="color: var(--primary); font-size: 0.7rem; font-weight: 800;">MMV</span>
+                <h3 style="margin: 0.5rem 0">Mechanic Motor vehicle</h3>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Foundational coding for data
+                    management.</p>
+                 <a href="login.html" class="btn btn-outline" style="width:100%; text-decoration: none;">Borrow</a>
+            </div>
+
+            <div class="book-card" data-title="Python Programming">
+                <div class="img-container"><img src="fitter benar.avif">
+                </div>
+                <span style="color: var(--primary); font-size: 0.7rem; font-weight: 800;">FITTER</span>
+                <h3 style="margin: 0.5rem 0">Fitter</h3>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Foundational coding for data
+                    management.</p>
+                 <a href="login.html" class="btn btn-outline" style="width:100%; text-decoration: none;">Borrow</a>
+            </div>
+
+            <div class="book-card" data-title="Python Programming">
+                <div class="img-container"><img src="wireman benar.jpg">
+                </div>
+                <span style="color: var(--primary); font-size: 0.7rem; font-weight: 800;">WIREMEN</span>
+                <h3 style="margin: 0.5rem 0">wireman</h3>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Foundational coding for data
+                    management.</p>
+               <a href="login.html" class="btn btn-outline" style="width:100%; text-decoration: none;">Borrow</a>
+            </div>
+
+            <div class="book-card" data-title="Python Programming">
+                <div class="img-container"><img src="sewing benar.jpg">
+                </div>
+                <span style="color: var(--primary); font-size: 0.7rem; font-weight: 800;">SEWING</span>
+                <h3 style="margin: 0.5rem 0">Sewing</h3>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Foundational coding for data
+                    management.</p>
+                 <a href="login.html" class="btn btn-outline" style="width:100%; text-decoration: none;">Borrow</a>
+            </div>
+
+            <div class="book-card" data-title="Python Programming">
+                <div class="img-container"><img src="serveyar benar.jpg">
+                </div>
+                <span style="color: var(--primary); font-size: 0.7rem; font-weight: 800;">SURVOER</span>
+                <h3 style="margin: 0.5rem 0">Survoer</h3>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Foundational coding for data
+                    management.</p>
+                 <a href="login.html" class="btn btn-outline" style="width:100%; text-decoration: none;">Borrow</a>
+            </div>
+
+            <div class="book-card" data-title="Python Programming">
+                <div class="img-container"><img src="welder benar.webp">
+                </div>
+                <span style="color: var(--primary); font-size: 0.7rem; font-weight: 800;">WELDER</span>
+                <h3 style="margin: 0.5rem 0">Welder</h3>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Foundational coding for data
+                    management.</p>
+                 <a href="login.html" class="btn btn-outline" style="width:100%; text-decoration: none;">Borrow</a>
+            </div>
+
+
+
+
+
+        </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+        <div>
+            <h2>Ready to upgrade?</h2>
+            <p style="color: #94a3b8; margin: 1.5rem 0 2rem;">Join 5,000+ technical institutions using NexLib.</p>
+            <p><i class="fas fa-envelope" style="color:var(--primary); margin-right: 10px;"></i> support@nexlib.com</p>
+        </div>
+        <form class="contact-form">
+            <input type="text" class="input-box" placeholder="Your Name">
+            <input type="email" class="input-box" placeholder="Your Email">
+            <textarea class="input-box" rows="4" placeholder="Your Message"></textarea>
+            <button class="btn btn-fill" style="width:100%; padding: 1rem;">Send Message</button>
+        </form>
+    </section>
+
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <div class="logo" style="margin-bottom: 1rem;"><i class="fas fa-bolt-lightning"></i> NexLib</div>
+                <p>Modern management for technical education.</p>
+            </div>
+            <div>
+                <h4>Product</h4>
+                <ul class="footer-links">
+                    <li>Features</li>
+                    <li>Pricing</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Company</h4>
+                <ul class="footer-links">
+                    <li>About Us</li>
+                    <li>Blog</li>
+                </ul>
+            </div>
+            <div>
+                <h4>Follow Us</h4>
+                <div style="display: flex; gap: 1rem; font-size: 1.2rem; margin-top: 10px;">
+                    <i class="fab fa-twitter"></i>
+                    <i class="fab fa-github"></i>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center; border-top: 1px solid #1e293b; padding-top: 2rem; font-size: 0.8rem;">
+            &copy; 2026 NexLib Systems Inc.
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const links = document.getElementById('navLinks');
+            const mobileBtns = document.querySelector('.mobile-btns');
+            links.classList.toggle('active');
+
+            // Toggle visibility of buttons inside mobile menu
+            if (window.innerWidth < 768) {
+                mobileBtns.style.display = links.classList.contains('active') ? 'flex' : 'none';
+            }
+        }
+
+        function filterBooks() {
+            let input = document.getElementById('bookSearch').value.toLowerCase();
+            let cards = document.getElementsByClassName('book-card');
+            for (let card of cards) {
+                let title = card.getAttribute('data-title').toLowerCase();
+                card.style.display = title.includes(input) ? "block" : "none";
+            }
+        }
+
+        window.onscroll = function () {
+            const nav = document.getElementById('navbar');
+            if (window.pageYOffset > 50) {
+                nav.style.padding = "0.7rem 5%";
+                nav.style.boxShadow = "0 10px 30px rgba(0,0,0,0.1)";
+            } else {
+                nav.style.padding = "1rem 5%";
+                nav.style.boxShadow = "none";
+            }
+        };
+    </script>
+</body>
+
+</html>
